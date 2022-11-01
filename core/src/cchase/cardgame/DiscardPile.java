@@ -1,6 +1,6 @@
 package cchase.cardgame;
 
-public class DiscardPile extends ArrayStack
+public class DiscardPile extends ArrayStack<Card>
 {
 
 }

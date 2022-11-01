@@ -1,31 +1,31 @@
 package cchase.cardgame;
 
-import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
-public class CardGame extends ApplicationAdapter {
+public class CardGame extends Game
+{
 	SpriteBatch batch;
-	Texture img;
-	
-	@Override
-	public void create () {
-		batch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");
-	}
+	ShapeRenderer shapeRenderer;
+	BitmapFont font;
 
+	
 	@Override
-	public void render () {
-		ScreenUtils.clear(0, 0, 0, 1);
-		batch.begin();
-		batch.draw(img, 0, 0);
-		batch.end();
+	public void create ()
+	{
+		batch = new SpriteBatch();
+		shapeRenderer = new ShapeRenderer();
+		font = new BitmapFont();
+		setScreen(new TitleScreen(this));
 	}
 	
 	@Override
-	public void dispose () {
+	public void dispose ()
+	{
 		batch.dispose();
-		img.dispose();
+		shapeRenderer.dispose();
+		font.dispose();
 	}
 }

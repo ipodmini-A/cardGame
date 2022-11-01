@@ -98,10 +98,23 @@ public class ArrayStack<T> implements Stack<T>
 	public int getSize(){
 		return numItems;
 	}
+
+	public T getData(int i)
+	{
+		return data[i];
+	}
+
+	public void setData(T[] data) {
+		this.data = data;
+	}
+
 	/**
 	 * Returns the current state of this stack. 
 	 * @return String representation of this stack.
 	 */
+
+
+
 	public String toString(){
 		String str = "";
 		for(int i = numItems-1; i >= 0; i--){
