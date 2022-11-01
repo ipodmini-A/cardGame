@@ -1,5 +1,7 @@
 package cchase.cardgame;
 
+import java.util.Random;
+
 /**
  *
  */
@@ -9,12 +11,13 @@ public class Card
     private String name;
     private int attack = -1;
     private int health = -1;
+    Random rand = new Random();
 
     public Card()
     {
         name = "NULL";
-        attack = 0;
-        health = 0;
+        attack = rand.nextInt(5);
+        health = rand.nextInt(5);
     }
 
     public Card(String n, int a, int h)

@@ -7,6 +7,11 @@ public class Deck extends ArrayStack<Card>
     public Deck()
     {
         super(maximumCards);
+
+        for (int i = 0; i < maximumCards; i++)
+        {
+            push(new Card());
+        }
     }
 
     public Card draw()
@@ -17,5 +22,4 @@ public class Deck extends ArrayStack<Card>
         }
         return this.pop();
     }
-
 }
