@@ -9,7 +9,8 @@ import com.badlogic.gdx.graphics.GL20;
 public class TitleScreen extends ScreenAdapter
 {
     CardGame game;
-    public TitleScreen(CardGame game) {
+    public TitleScreen(CardGame game)
+    {
         this.game = game;
     }
 
@@ -37,7 +38,9 @@ public class TitleScreen extends ScreenAdapter
         game.batch.end();
     }
     @Override
-    public void hide(){
+    public void hide()
+    {
         Gdx.input.setInputProcessor(null);
+
     }
 }

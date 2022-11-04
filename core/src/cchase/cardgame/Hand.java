@@ -1,7 +1,11 @@
 package cchase.cardgame;
 
-import java.util.LinkedList;
-
+/**
+ * Title: Hand.java
+ *
+ * This class serves as the players hand. Currently it is a stack, but after thinking about it,
+ * this class would do better as a list. Refactor later.
+ */
 public class Hand extends ArrayStack<Card>
 {
 
@@ -20,7 +24,7 @@ public class Hand extends ArrayStack<Card>
     public void add(Card c)
     {
         /**
-         * Pushes the passed through card into the stack.
+         * Pushes the passed through card into the hand stack.
          */
         push(c);
     }

@@ -15,13 +15,15 @@ public class Card
 
     public Card()
     {
-        name = "NULL";
+        //Default constructor. A name of "Card" is set, and the attack and health are random numbers between 0-4
+        name = "Card";
         attack = rand.nextInt(5);
         health = rand.nextInt(5);
     }
 
     public Card(String n, int a, int h)
     {
+        //Constructor with arguments. name, attack, and health are set to the values passed through.
         name = n;
         attack = a;
         health = h;

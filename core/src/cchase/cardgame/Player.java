@@ -42,5 +42,17 @@ public class Player
             hand.push(stackA.pop());
         }
     }
-    
+
+    public Card placeCardFromHand()
+    {
+        return hand.pop();
+    }
+
+    public Card placeCard(int i)
+    {
+        Card cardToBeRemoved = hand.getData(i);
+        remove(i);
+        return cardToBeRemoved;
+    }
+
 }
