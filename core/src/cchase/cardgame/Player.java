@@ -16,7 +16,9 @@ public class Player
         hand = new Hand();
         discardPile = new DiscardPile();
     }
-
+    /**
+     * Draws a card from the deck and places it in the hand.
+     */
     public void draw()
     {
         hand.push(deck.pop());
@@ -43,6 +45,9 @@ public class Player
         }
     }
 
+    /**
+     * Returns a card from hand
+     */
     public Card placeCardFromHand()
     {
         return hand.pop();

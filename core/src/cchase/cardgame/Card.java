@@ -18,7 +18,7 @@ public class Card
         //Default constructor. A name of "Card" is set, and the attack and health are random numbers between 0-4
         name = "Card";
         attack = rand.nextInt(5);
-        health = rand.nextInt(5);
+        health = rand.nextInt(4) + 1;
     }
 
     public Card(String n, int a, int h)
