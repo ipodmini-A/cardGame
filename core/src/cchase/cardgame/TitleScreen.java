@@ -17,6 +17,7 @@ public class TitleScreen extends ScreenAdapter
     @Override
     public void show()
     {
+        game.camera.update();
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
             public boolean keyDown(int keyCode) {
@@ -26,9 +27,11 @@ public class TitleScreen extends ScreenAdapter
                 return true;
             }
         });
+
     }
     @Override
-    public void render(float delta) {
+    public void render(float delta)
+    {
         Gdx.gl.glClearColor(0, .25f, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         game.batch.begin();

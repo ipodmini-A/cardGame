@@ -6,7 +6,8 @@ package cchase.cardgame;
  * The goal is to pull from your hand, and place the cards on the field.
  *
  * TODO: Code in zones for second player (AI) and also think about how the board is going to be laid out
- * TODO: Refactor zones. It should be easier to spawn Zones. Modify constructors?
+ * TODO: This class has grown too big, and its starting to become difficult to keep track of it. Refactor if possible.
+ * TODO: Begin to think about how the screen looks.
  */
 
 import com.badlogic.gdx.*;
@@ -20,21 +21,42 @@ public class Board
     {
         int zoneLocation;
         Card activeCard;
+        boolean cardSelected = false;
         boolean cardPlaced = false;
-        float zoneX = 50.0f;
-        float zoneY = 50.0f;
+        float zoneX = Gdx.graphics.getWidth() / 3.5f;
+        float zoneY = Gdx.graphics.getHeight() / 4;
+        int player;
 
         /**
-         * Constructor. If more than 4 zones are called, the zone will not be created
-         * and a runtime exception will be thrown.
+         * Constructor. Currently, just sets the player to -1.
          */
         public Zone()
         {
-            if (player1ZonesCount < player1Zones)
+            player = -1;
+        }
+
+        /**
+         *
+         * @param location represents where the cards will be rendered. 0 for the player side. 1 for the ai(player 2)
+         */
+        public Zone(int location)
+        {
+            inputMultiplexer.addProcessor(this);
+            if (location == 0)
             {
                 zoneX = zoneX + (150 * player1ZonesCount);
                 zoneLocation = player1ZonesCount;
                 player1ZonesCount++;
+                player = 0;
+            }
+
+            if (location == 1)
+            {
+                zoneY = 400f;
+                zoneX = zoneX + (150 * player2ZonesCount);
+                zoneLocation = player2ZonesCount;
+                player2ZonesCount++;
+                player = 1;
             }
         }
 
@@ -47,6 +69,7 @@ public class Board
          */
         public Zone(float x, float y)
         {
+            inputMultiplexer.addProcessor(this);
             zoneX = x;
             zoneY = y;
         }
@@ -74,6 +97,23 @@ public class Board
                 font.draw(fontBatch, "Health: " + activeCard.getHealth(), zoneX + 15,zoneY + 125);
                 font.draw(fontBatch, "Attack: " + activeCard.getAttack(), zoneX + 15,zoneY + 105);
                 fontBatch.end();
+                if (activeCard.getHealth() <= 0 && cardPlaced)
+                {
+                    cardPlaced = false;
+                    player1.discardPile.push(activeCard);
+                }
+            }
+            if (cardSelected && cardPlaced)
+            {
+                shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+                shapeRenderer.setColor(1,1,0,0);
+                shapeRenderer.rect(zoneX, zoneY, cardWidth, cardHeight);
+                shapeRenderer.end();
+                fontBatch.begin();
+                font.draw(fontBatch, activeCard.getName(), zoneX + 25,zoneY + 25);
+                font.draw(fontBatch, "Health: " + activeCard.getHealth(), zoneX + 15,zoneY + 125);
+                font.draw(fontBatch, "Attack: " + activeCard.getAttack(), zoneX + 15,zoneY + 105);
+                fontBatch.end();
                 if (activeCard.getHealth() == 0 && cardPlaced)
                 {
                     cardPlaced = false;
@@ -83,7 +123,7 @@ public class Board
         }
 
         /*
-    Below is code for user input. Only touchDown is in use at the moment.
+        Below is code for user input. Only touchDown is in use at the moment.
         */
         @Override
         public boolean keyDown(int keycode) {
@@ -112,25 +152,42 @@ public class Board
         @Override
         public boolean touchDown(int screenX, int screenY, int pointer, int button)
         {
-            if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && !cardPlaced)
+            if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) // && player == 0
             {
+
                 mouseX = Gdx.input.getX();
                 mouseY = (Gdx.graphics.getHeight() - Gdx.input.getY()); //lol y is inverted so this is to un-invert it.
-                for (int i = 0; i < player1.hand.currentHand.size(); i++)
+                if (!cardPlaced)
                 {
-                    if (player1.hand.currentHand.get(i).cardSelected == true &&
-                            (mouseX > zoneX && mouseX < cardWidth + zoneX) &&
-                            (mouseY > zoneY && mouseY < cardHeight + zoneY))
+                    for (int i = 0; i < player1.hand.currentHand.size(); i++)
                     {
-                        activeCard = player1.placeCardFromHand(i);
-                        cardPlaced = true;
-                        return true;
+                        if (player1.hand.currentHand.get(i).cardSelected &&
+                                (mouseX > zoneX && mouseX < cardWidth + zoneX) &&
+                                (mouseY > zoneY && mouseY < cardHeight + zoneY))
+                        {
+                            activeCard = player1.placeCardFromHand(i);
+                            cardPlaced = true;
+                            return true;
+                        }
+                    }
+                }
+
+                if (cardPlaced)
+                {
+                    for (int i = 0; i < player1.hand.currentHand.size() + 1; i++)
+                    {
+                        if ((mouseX > zoneX && mouseX < cardWidth + zoneX) &&
+                                (mouseY > zoneY && mouseY < cardHeight + zoneY))
+                        {
+                            cardSelected = true;
+                            return true;
+                        }
                     }
                 }
                 return false;
             }
 
-            if(Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT) && cardPlaced)
+            if(Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT) && cardPlaced && player == 0)
             {
                 mouseX = Gdx.input.getX();
                 mouseY = (Gdx.graphics.getHeight() - Gdx.input.getY()); //lol y is inverted so this is to un-invert it.
@@ -170,13 +227,15 @@ public class Board
     public class DeckZone extends Zone
     {
         Deck activeDeck;
-        float zoneX = 650.0f;
-        float zoneY = 50.0f;
+        float  zoneX = Gdx.graphics.getWidth() - 200;
+        float zoneY = 100;
 
         public DeckZone(Player p)
         {
-            zoneLocation = 5;
+            inputMultiplexer.addProcessor(this);
+            zoneLocation = -1;
             activeDeck = p.deck;
+            player = 1;
         }
 
         public void zoneRender()
@@ -214,9 +273,9 @@ public class Board
 
     Player player1;
     Player player2;
-    float cardSize = 40f;
-    float cardWidth = 2.5f * cardSize;
-    float cardHeight = 3.5f * cardSize;
+    float cardScale = 40f;
+    float cardWidth = 2.5f * cardScale;
+    float cardHeight = 3.5f * cardScale;
     SpriteBatch batch;
     SpriteBatch fontBatch;
     BitmapFont font;
@@ -225,12 +284,13 @@ public class Board
     float mouseY = (Gdx.graphics.getHeight() - Gdx.input.getY());
     int player1Zones = 4;
     int player1ZonesCount = 0;
-    Zone zone0;
-    Zone zone1;
-    Zone zone2;
-    Zone zone3;
+
+    int player2Zones = 4;
+    int player2ZonesCount = 0;
+    Zone[] zone;
     DeckZone deckZone;
-    InputMultiplexer inputMultiplexer;
+    InputMultiplexer inputMultiplexer = new InputMultiplexer();
+
 
     /**
      * Default constructor.
@@ -247,17 +307,16 @@ public class Board
         shapeRenderer = new ShapeRenderer();
         player1 = new Player();
         player2 = new Player();
-        zone0 = new Zone();
-        zone1 = new Zone();
-        zone2 = new Zone();
-        zone3 = new Zone();
+        zone = new Zone[8];
+        for (int i = 0; i < 4; i++)
+        {
+            zone[i] = new Zone(0);
+        }
+        for (int i = 4; i < 8; i++)
+        {
+            zone[i] = new Zone(1);
+        }
         deckZone = new DeckZone(player1);
-        inputMultiplexer = new InputMultiplexer();
-        inputMultiplexer.addProcessor(deckZone);
-        inputMultiplexer.addProcessor(zone0);
-        inputMultiplexer.addProcessor(zone1);
-        inputMultiplexer.addProcessor(zone2);
-        inputMultiplexer.addProcessor(zone3);
         inputMultiplexer.addProcessor(player1.hand);
         Gdx.input.setInputProcessor(inputMultiplexer);
     }
@@ -270,11 +329,19 @@ public class Board
         font.setColor(1,1,1,0);
         shapeRenderer = new ShapeRenderer();
         player1 = p1;
-        zone0 = new Zone();
-        zone1 = new Zone();
-        zone2 = new Zone();
-        zone3 = new Zone();
+        zone = new Zone[8];
+        for (int i = 0; i < 4; i++)
+        {
+            zone[i] = new Zone(0);
+        }
+        for (int i = 4; i < 8; i++)
+        {
+            zone[i] = new Zone(1);
+        }
         deckZone = new DeckZone(p1);
+        inputMultiplexer.addProcessor(player1.hand);
+        Gdx.input.setInputProcessor(inputMultiplexer);
+
     }
 
     /**
@@ -283,16 +350,38 @@ public class Board
      */
     public void boardPlace()
     {
+        //There is a bad bug, where if a card attacks the card lower than it in the array list
+        //This is most likely happening because of the j for loop.
+        //Bug won't show up unless there is a card that attacks the card next to it.
         player1.hand.handCardRender();
-        zone0.zoneRender();
-        zone1.zoneRender();
-        zone2.zoneRender();
-        zone3.zoneRender();
+        for (int i = 0; i < zone.length; i++)
+        {
+            zone[i].zoneRender();
+            if (zone[i].cardSelected)
+            {
+                for (int j = 0; j < i; j++)
+                {
+                    if (zone[j].cardSelected)
+                    {
+                        zone[j].activeCard.setHealth(zone[j].activeCard.getHealth() - zone[i].activeCard.getAttack());
+                        zone[i].cardSelected = false;
+                        zone[j].cardSelected = false;
+                        break;
+                    }
+                }
+                for (int k = i + 1; k < zone.length; k++)
+                {
+                    if (zone[k].cardSelected)
+                    {
+                        zone[k].activeCard.setHealth(zone[k].activeCard.getHealth() - zone[i].activeCard.getAttack());
+                        zone[i].cardSelected = false;
+                        zone[k].cardSelected = false;
+                        break;
+                    }
+                }
+            }
+        }
         deckZone.zoneRender();
-        fontBatch.begin();
-        font.draw(fontBatch, mouseX + "", 100,400);
-        font.draw(fontBatch, mouseY + "", 100,300);
-        fontBatch.end();
     }
 
     /**

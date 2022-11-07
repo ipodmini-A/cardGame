@@ -74,10 +74,10 @@ public class Hand implements InputProcessor
         }
     }
     List<CardVisible> currentHand;
-    float cardSize = 10f;
+    float cardSize = 30f;
     float cardHeight = 3.5f * cardSize;
     float cardWidth = 2.5f * cardSize;
-    float cardPlacementScale = 50f;
+    float cardPlacementScale = 80f;
     private float startX = 300;
 
     /**
