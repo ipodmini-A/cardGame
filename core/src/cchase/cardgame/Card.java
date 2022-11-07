@@ -29,6 +29,13 @@ public class Card
         health = h;
     }
 
+    public Card(Card card)
+    {
+        name = card.getName();
+        attack = card.getAttack();
+        health = card.getHealth();
+    }
+
     public String getName()
     {
         return name;

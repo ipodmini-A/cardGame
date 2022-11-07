@@ -4,15 +4,15 @@ package cchase.cardgame;
  * This class makes me question if Computer Science was the right field for me.
  * Class will change as better solutions come up. Currently the class has 8 cards that are allowed on it.
  * The goal is to pull from your hand, and place the cards on the field.
+ *
+ * TODO: Code in zones for second player (AI) and also think about how the board is going to be laid out
+ * TODO: Refactor zones. It should be easier to spawn Zones. Modify constructors?
  */
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Board
 {
@@ -30,15 +30,25 @@ public class Board
          */
         public Zone()
         {
-            if (zonesCount < zones)
+            if (player1ZonesCount < player1Zones)
             {
-                zoneX = zoneX + (150 * zonesCount);
-                zoneLocation = zonesCount;
-                zonesCount++;
-            }else
-            {
-                RuntimeException zonesFull = new RuntimeException("Zones Full");
+                zoneX = zoneX + (150 * player1ZonesCount);
+                zoneLocation = player1ZonesCount;
+                player1ZonesCount++;
             }
+        }
+
+        /**
+         * Parameter constructor. Accepts two floats, one representing X, and one representing Y
+         * Warning: Be careful, LibGDX is annoying with how it handles its X and Y axis. Don't say I
+         * didn't warn you future self.
+         * @param x X location of the rectangle that is currently representing the zone
+         * @param y Y location of the rectangle that is currently representing the zone
+         */
+        public Zone(float x, float y)
+        {
+            zoneX = x;
+            zoneY = y;
         }
 
         /**
@@ -72,6 +82,9 @@ public class Board
             }
         }
 
+        /*
+    Below is code for user input. Only touchDown is in use at the moment.
+        */
         @Override
         public boolean keyDown(int keycode) {
             return false;
@@ -94,6 +107,7 @@ public class Board
          * This uses the touchDown method from InputProcessor. If this grows, this will
          * have to be split into a different class eventually.
          *
+         * TODO: Cry... Oh and only allow for one card to be selected.
          */
         @Override
         public boolean touchDown(int screenX, int screenY, int pointer, int button)
@@ -102,11 +116,16 @@ public class Board
             {
                 mouseX = Gdx.input.getX();
                 mouseY = (Gdx.graphics.getHeight() - Gdx.input.getY()); //lol y is inverted so this is to un-invert it.
-                if ((mouseX > zoneX && mouseX < cardWidth + zoneX) && (mouseY > zoneY && mouseY < cardHeight + zoneY))
+                for (int i = 0; i < player1.hand.currentHand.size(); i++)
                 {
-                    activeCard = player1.placeCardFromHand();
-                    cardPlaced = true;
-                    return true;
+                    if (player1.hand.currentHand.get(i).cardSelected == true &&
+                            (mouseX > zoneX && mouseX < cardWidth + zoneX) &&
+                            (mouseY > zoneY && mouseY < cardHeight + zoneY))
+                    {
+                        activeCard = player1.placeCardFromHand(i);
+                        cardPlaced = true;
+                        return true;
+                    }
                 }
                 return false;
             }
@@ -193,20 +212,6 @@ public class Board
         }
     }
 
-    public class handZone extends Zone
-    {
-        List<Hand> activeHand;
-        float zoneX = 50.0f;
-        float zoneY = 50.0f;
-
-        public handZone()
-        {
-            activeHand = new ArrayList<Hand>();
-            activeHand = player1.hand;
-
-        }
-    }
-
     Player player1;
     Player player2;
     float cardSize = 40f;
@@ -218,8 +223,8 @@ public class Board
     ShapeRenderer shapeRenderer;
     float mouseX = Gdx.input.getX();
     float mouseY = (Gdx.graphics.getHeight() - Gdx.input.getY());
-    int zones = 4;
-    int zonesCount = 0;
+    int player1Zones = 4;
+    int player1ZonesCount = 0;
     Zone zone0;
     Zone zone1;
     Zone zone2;
@@ -241,6 +246,7 @@ public class Board
         font = new BitmapFont();
         shapeRenderer = new ShapeRenderer();
         player1 = new Player();
+        player2 = new Player();
         zone0 = new Zone();
         zone1 = new Zone();
         zone2 = new Zone();
@@ -252,6 +258,7 @@ public class Board
         inputMultiplexer.addProcessor(zone1);
         inputMultiplexer.addProcessor(zone2);
         inputMultiplexer.addProcessor(zone3);
+        inputMultiplexer.addProcessor(player1.hand);
         Gdx.input.setInputProcessor(inputMultiplexer);
     }
 
@@ -270,8 +277,13 @@ public class Board
         deckZone = new DeckZone(p1);
     }
 
+    /**
+     * boardPlace is rendering the zones and deck on screen. Now that I think about it, why is this
+     * method called boardPlace?
+     */
     public void boardPlace()
     {
+        player1.hand.handCardRender();
         zone0.zoneRender();
         zone1.zoneRender();
         zone2.zoneRender();
@@ -283,6 +295,10 @@ public class Board
         fontBatch.end();
     }
 
+    /**
+     * "Deconstructor" for Board. disposes of batch, font, and shapeRenderer.
+     * TODO: Add more dispose methods as they arise
+     */
     public void removeBoard()
     {
         batch.dispose();

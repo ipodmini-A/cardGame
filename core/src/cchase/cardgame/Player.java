@@ -7,6 +7,8 @@ public class Player
     Deck deck;
     Hand hand;
     DiscardPile discardPile;
+    int zoneCount = 0;
+    int zones = 4;
 
     public Player()
     {
@@ -21,28 +23,12 @@ public class Player
      */
     public void draw()
     {
-        hand.push(deck.pop());
+        hand.add(deck.pop());
     }
 
     public void remove(int c)
     {
-        Card cardToBeRemoved = hand.getData(c);
-        Hand stackA = new Hand();
-        Hand stackB = new Hand();
-
-        while (!hand.isEmpty())
-        {
-            Card cardPopped = hand.pop();
-            if (!cardPopped.equals(cardToBeRemoved))
-            {
-                stackA.push(cardPopped);
-            }
-        }
-
-        while (!stackA.isEmpty())
-        {
-            hand.push(stackA.pop());
-        }
+        hand.currentHand.remove(c);
     }
 
     /**
@@ -50,12 +36,17 @@ public class Player
      */
     public Card placeCardFromHand()
     {
-        return hand.pop();
+        return hand.currentHand.remove(0);
+    }
+
+    public Card placeCardFromHand(int index)
+    {
+        return hand.currentHand.remove(index);
     }
 
     public Card placeCard(int i)
     {
-        Card cardToBeRemoved = hand.getData(i);
+        Card cardToBeRemoved = hand.currentHand.remove(i);
         remove(i);
         return cardToBeRemoved;
     }
