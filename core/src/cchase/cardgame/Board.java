@@ -15,6 +15,8 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
+import java.util.Random;
+
 public class Board
 {
     public class Zone implements InputProcessor
@@ -23,6 +25,7 @@ public class Board
         Card activeCard;
         boolean cardSelected = false;
         boolean cardPlaced = false;
+        boolean cardAttacked = false;
         float zoneX = Gdx.graphics.getWidth() / 3.5f;
         float zoneY = Gdx.graphics.getHeight() / 4;
         int player;
@@ -126,7 +129,12 @@ public class Board
         Below is code for user input. Only touchDown is in use at the moment.
         */
         @Override
-        public boolean keyDown(int keycode) {
+        public boolean keyDown(int keycode)
+        {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
+            {
+                playerTurn = !playerTurn;
+            }
             return false;
         }
 
@@ -148,6 +156,7 @@ public class Board
          * have to be split into a different class eventually.
          *
          * TODO: Cry... Oh and only allow for one card to be selected.
+         * TODO: Fix bug where player can select ai cards.
          */
         @Override
         public boolean touchDown(int screenX, int screenY, int pointer, int button)
@@ -157,7 +166,7 @@ public class Board
 
                 mouseX = Gdx.input.getX();
                 mouseY = (Gdx.graphics.getHeight() - Gdx.input.getY()); //lol y is inverted so this is to un-invert it.
-                if (!cardPlaced)
+                if ((!cardPlaced) && (player == 0) && (playerTurn))
                 {
                     for (int i = 0; i < player1.hand.currentHand.size(); i++)
                     {
@@ -172,7 +181,7 @@ public class Board
                     }
                 }
 
-                if (cardPlaced)
+                if (cardPlaced && playerTurn && !cardAttacked)
                 {
                     for (int i = 0; i < player1.hand.currentHand.size() + 1; i++)
                     {
@@ -184,7 +193,6 @@ public class Board
                         }
                     }
                 }
-                return false;
             }
 
             if(Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT) && cardPlaced && player == 0)
@@ -272,7 +280,7 @@ public class Board
     }
 
     Player player1;
-    Player player2;
+    AIPlayer player2;
     float cardScale = 40f;
     float cardWidth = 2.5f * cardScale;
     float cardHeight = 3.5f * cardScale;
@@ -290,6 +298,9 @@ public class Board
     Zone[] zone;
     DeckZone deckZone;
     InputMultiplexer inputMultiplexer = new InputMultiplexer();
+    boolean firstTurnDraw = false;
+    boolean playerTurn = true;
+    Random rand = new Random();
 
 
     /**
@@ -306,7 +317,7 @@ public class Board
         font = new BitmapFont();
         shapeRenderer = new ShapeRenderer();
         player1 = new Player();
-        player2 = new Player();
+        player2 = new AIPlayer();
         zone = new Zone[8];
         for (int i = 0; i < 4; i++)
         {
@@ -341,7 +352,14 @@ public class Board
         deckZone = new DeckZone(p1);
         inputMultiplexer.addProcessor(player1.hand);
         Gdx.input.setInputProcessor(inputMultiplexer);
+    }
 
+    public void playerTurn()
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            zone[i].cardAttacked = false;
+        }
     }
 
     /**
@@ -353,7 +371,23 @@ public class Board
         //There is a bad bug, where if a card attacks the card lower than it in the array list
         //This is most likely happening because of the j for loop.
         //Bug won't show up unless there is a card that attacks the card next to it.
-        player1.hand.handCardRender();
+        while (!firstTurnDraw)
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                player1.hand.add(player1.deck.draw());
+            }
+            firstTurnDraw = true;
+        }
+
+        player1.hand.handCardRender(this);
+        player2.AIUpdate(this);
+        if (playerTurn == false)
+        {
+            player2.aiPlay();
+            playerTurn();
+        }
+
         for (int i = 0; i < zone.length; i++)
         {
             zone[i].zoneRender();
@@ -365,6 +399,7 @@ public class Board
                     {
                         zone[j].activeCard.setHealth(zone[j].activeCard.getHealth() - zone[i].activeCard.getAttack());
                         zone[i].cardSelected = false;
+                        zone[i].cardAttacked = true;
                         zone[j].cardSelected = false;
                         break;
                     }
@@ -375,6 +410,7 @@ public class Board
                     {
                         zone[k].activeCard.setHealth(zone[k].activeCard.getHealth() - zone[i].activeCard.getAttack());
                         zone[i].cardSelected = false;
+                        zone[i].cardAttacked = true;
                         zone[k].cardSelected = false;
                         break;
                     }

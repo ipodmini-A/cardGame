@@ -6,7 +6,6 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.utils.Align;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,9 +66,9 @@ public class Hand implements InputProcessor
                 shapeRenderer.end();
             }
             cardBatch.begin();
-            font.draw(cardBatch, getName(), cardLocationX,cardLocationY + 25);
-            font.draw(cardBatch, "Health: " + getHealth(), cardLocationX,cardLocationY + 15);
-            font.draw(cardBatch, "Attack: " + getAttack(), cardLocationX,cardLocationY + 5);
+            font.draw(cardBatch, getName(), cardLocationX,cardLocationY + 35);
+            font.draw(cardBatch, "Health: " + getHealth(), cardLocationX,cardLocationY + 25);
+            font.draw(cardBatch, "Attack: " + getAttack(), cardLocationX,cardLocationY + 15);
             cardBatch.end();
         }
     }
@@ -79,6 +78,7 @@ public class Hand implements InputProcessor
     float cardWidth = 2.5f * cardSize;
     float cardPlacementScale = 80f;
     private float startX = 300;
+    Board board;
 
     /**
      * The constructor. Currently, just creates a List that accepts CardVisible
@@ -95,13 +95,15 @@ public class Hand implements InputProcessor
     {
         currentHand.add(new CardVisible(c));
     }
-    public void handCardRender()
+    public void handCardRender(Board b)
     {
         for (int i = 0; i < currentHand.size(); i++)
         {
             currentHand.get(i).cardLocationX = cardPlacementScale + i * cardPlacementScale;
             currentHand.get(i).cardRender();
         }
+
+        board = b;
     }
 
     /**
@@ -149,7 +151,8 @@ public class Hand implements InputProcessor
     {
         for (int i = 0; i < currentHand.size(); i++)
         {
-            if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && !currentHand.get(i).cardSelected)
+            if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && !currentHand.get(i).cardSelected
+                    && board.playerTurn == true)
             {
                 int mouseX = Gdx.input.getX();
                 int mouseY = (Gdx.graphics.getHeight() - Gdx.input.getY()); //lol y is inverted so this is to un-invert it.
