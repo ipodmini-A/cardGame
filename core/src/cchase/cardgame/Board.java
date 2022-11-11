@@ -382,7 +382,7 @@ public class Board
 
         player1.hand.handCardRender(this);
         player2.AIUpdate(this);
-        if (playerTurn == false)
+        if (!playerTurn)
         {
             player2.aiPlay();
             playerTurn();
@@ -429,5 +429,6 @@ public class Board
         batch.dispose();
         font.dispose();
         shapeRenderer.dispose();
+        fontBatch.dispose();
     }
 }

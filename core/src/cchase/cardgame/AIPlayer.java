@@ -22,7 +22,7 @@ public class AIPlayer extends Player
         if (!boardInPlay.playerTurn)
         {
             aiTurn = true;
-            int tempIndex = rand.nextInt(4, 8);
+            int tempIndex = rand.nextInt(4) + 4;
             draw();
             boardInPlay.zone[tempIndex].activeCard = placeCardFromHand();
             boardInPlay.zone[tempIndex].cardPlaced = true; // rand.nextInt(3, 8)

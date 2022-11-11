@@ -3,9 +3,10 @@ package cchase.cardgame;
 import java.util.Random;
 
 /**
+ * Title: Card
  *
+ * Card is a class that represents the variables within a card. Currently, only contains three variables.
  */
-
 public class Card
 {
     private String name;
@@ -13,6 +14,12 @@ public class Card
     private int health = -1;
     Random rand = new Random();
 
+    /**
+     * Constructor.
+     * Name becomes card with a random number at the end.
+     * Attack is a random number between 0 - 4.
+     * Health is a random number between 1 - 4.
+     */
     public Card()
     {
         //Default constructor. A name of "Card" is set, and the attack and health are random numbers between 0-4
@@ -21,6 +28,12 @@ public class Card
         health = rand.nextInt(4) + 1;
     }
 
+    /**
+     * Parameterized constructor.
+     * @param n is the name of the card.
+     * @param a is the attack of the card.
+     * @param h is the health of the card.
+     */
     public Card(String n, int a, int h)
     {
         //Constructor with arguments. name, attack, and health are set to the values passed through.
@@ -29,6 +42,11 @@ public class Card
         health = h;
     }
 
+    /**
+     * Constructor that accepts a card. There's definitely a better way to do this.
+     * This is really for classes that extend this class
+     * @param card is a Card, and the name, attack, and health get passed down.
+     */
     public Card(Card card)
     {
         name = card.getName();
