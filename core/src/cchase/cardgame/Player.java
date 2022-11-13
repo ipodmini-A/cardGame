@@ -2,9 +2,9 @@ package cchase.cardgame;
 
 public class Player
 {
-    String name;
-    int health = -1;
-    Deck deck;
+    private String name;
+    private int health = -1;
+    private Deck deck;
     Hand hand;
     DiscardPile discardPile;
     int zoneCount = 0;
@@ -51,4 +51,11 @@ public class Player
         return cardToBeRemoved;
     }
 
+    public Deck getDeck() {
+        return deck;
+    }
+
+    public void setDeck(Deck deck) {
+        this.deck = deck;
+    }
 }

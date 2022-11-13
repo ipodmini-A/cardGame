@@ -9,7 +9,7 @@ package cchase.cardgame;
  * Description: Returns an exception if the stack is full
  * </p>
  * 
- * @author Christopher Chase
+ * @author
  */
 
 public class StackFullException extends RuntimeException {

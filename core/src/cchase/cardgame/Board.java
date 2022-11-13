@@ -5,9 +5,9 @@ package cchase.cardgame;
  * Class will change as better solutions come up. Currently the class has 8 cards that are allowed on it.
  * The goal is to pull from your hand, and place the cards on the field.
  *
- * TODO: Code in zones for second player (AI) and also think about how the board is going to be laid out
+ * TODO: Think about how the board is going to be laid out
  * TODO: This class has grown too big, and its starting to become difficult to keep track of it. Refactor if possible.
- * TODO: Begin to think about how the screen looks.
+ * TODO: Time to think about rules.
  */
 
 import com.badlogic.gdx.*;
@@ -156,7 +156,8 @@ public class Board
          * have to be split into a different class eventually.
          *
          * TODO: Cry... Oh and only allow for one card to be selected.
-         * TODO: Fix bug where player can select ai cards.
+         * TODO: Fix bug where player can attack own cards.
+         * TODO: Prevent player from placing down cards that are already in the zone.
          */
         @Override
         public boolean touchDown(int screenX, int screenY, int pointer, int button)
@@ -176,17 +177,42 @@ public class Board
                         {
                             activeCard = player1.placeCardFromHand(i);
                             cardPlaced = true;
+                            player1.hand.setCardAlreadySelected(false);
                             return true;
                         }
                     }
                 }
 
-                if (cardPlaced && playerTurn && !cardAttacked)
+                if (cardPlaced && playerTurn && !cardAttacked && !cardSelected && player == 0)
                 {
-                    for (int i = 0; i < player1.hand.currentHand.size() + 1; i++)
+                    for (int i = 0; i < zone.length; i++)
                     {
                         if ((mouseX > zoneX && mouseX < cardWidth + zoneX) &&
                                 (mouseY > zoneY && mouseY < cardHeight + zoneY))
+                        {
+                            cardSelected = true;
+                            return true;
+                        }
+                    }
+                }else if (cardSelected && playerTurn && !cardAttacked && player == 0)
+                {
+                    for (int i = 0; i < zone.length + 1; i++)
+                    {
+                        if ((mouseX > zoneX && mouseX < cardWidth + zoneX) &&
+                                (mouseY > zoneY && mouseY < cardHeight + zoneY))
+                        {
+                            cardSelected = false;
+                            return true;
+                        }
+                    }
+                }
+
+                if (!cardSelected && playerTurn && !cardAttacked && player == 1)
+                {
+                    for (int i = 0; i < zone.length - 1; i++)
+                    {
+                        if ((mouseX > zoneX && mouseX < cardWidth + zoneX) &&
+                                (mouseY > zoneY && mouseY < cardHeight + zoneY) && zone[i].cardSelected)
                         {
                             cardSelected = true;
                             return true;
@@ -199,12 +225,13 @@ public class Board
             {
                 mouseX = Gdx.input.getX();
                 mouseY = (Gdx.graphics.getHeight() - Gdx.input.getY()); //lol y is inverted so this is to un-invert it.
-                if ((mouseX > zoneX && mouseX < cardWidth + zoneX) && (mouseY > zoneY && mouseY < cardHeight + zoneY))
+                if ((mouseX > zoneX && mouseX < cardWidth + zoneX) && (mouseY > zoneY && mouseY < cardHeight + zoneY)
+                        && cardSelected == true)
                 {
-                    cardPlaced = false;
-                    activeCard = null;
+                    cardSelected = false;
                     return true;
                 }
+
                 return false;
             }
             return false;
@@ -242,7 +269,7 @@ public class Board
         {
             inputMultiplexer.addProcessor(this);
             zoneLocation = -1;
-            activeDeck = p.deck;
+            activeDeck = p.getDeck();
             player = 1;
         }
 
@@ -268,9 +295,11 @@ public class Board
             {
                 mouseX = Gdx.input.getX();
                 mouseY = (Gdx.graphics.getHeight() - Gdx.input.getY()); //lol y is inverted so this is to un-invert it.
-                if ((mouseX > zoneX && mouseX < cardWidth + zoneX) && (mouseY > zoneY && mouseY < cardHeight + zoneY))
+                if ((mouseX > zoneX && mouseX < cardWidth + zoneX) && (mouseY > zoneY && mouseY < cardHeight + zoneY)
+                & !playerDrew)
                 {
                     player1.draw();
+                    playerDrew = true;
                     return true;
                 }
                 return false;
@@ -299,6 +328,7 @@ public class Board
     DeckZone deckZone;
     InputMultiplexer inputMultiplexer = new InputMultiplexer();
     boolean firstTurnDraw = false;
+    boolean playerDrew = false;
     boolean playerTurn = true;
     Random rand = new Random();
 
@@ -360,11 +390,14 @@ public class Board
         {
             zone[i].cardAttacked = false;
         }
+        playerDrew = false;
     }
 
     /**
      * boardPlace is rendering the zones and deck on screen. Now that I think about it, why is this
      * method called boardPlace?
+     *
+     * TODO: Fix attacking issue, where player cannot attack AI
      */
     public void boardPlace()
     {
@@ -375,7 +408,7 @@ public class Board
         {
             for (int i = 0; i < 5; i++)
             {
-                player1.hand.add(player1.deck.draw());
+                player1.hand.add(player1.getDeck().draw());
             }
             firstTurnDraw = true;
         }
