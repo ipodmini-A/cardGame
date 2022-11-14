@@ -1,8 +1,5 @@
 package cchase.cardgame;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -17,7 +14,7 @@ import java.util.List;
  * This should be a easier solution to allow the player to add cards, as well as place cards from their hand.
  */
 
-public class Hand implements InputProcessor
+public class Hand
 {
     /**
      * Title: CardVisible
@@ -123,102 +120,6 @@ public class Hand implements InputProcessor
     public void setStartX(float startX)
     {
         this.startX = startX;
-    }
-
-    /*
-    Below is code for user input. Only touchDown is in use at the moment.
-     */
-    @Override
-    public boolean keyDown(int keycode) {
-        return false;
-    }
-
-    @Override
-    public boolean keyUp(int keycode) {
-        return false;
-    }
-
-    @Override
-    public boolean keyTyped(char character) {
-        return false;
-    }
-
-    /**
-     * Checks to see if the card was clicked on, and will change the cards color to indicate that it was selected.
-     */
-    @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button)
-    {
-        for (int i = 0; i < currentHand.size(); i++)
-        {
-            if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
-                    && board.playerTurn)
-            {
-                int mouseX = Gdx.input.getX();
-                int mouseY = (Gdx.graphics.getHeight() - Gdx.input.getY()); //lol y is inverted so this is to un-invert it.
-                if ((mouseX > currentHand.get(i).cardLocationX &&
-                        mouseX < cardWidth + currentHand.get(i).cardLocationX)
-                        && (mouseY > currentHand.get(i).cardLocationY
-                        && mouseY < cardHeight + currentHand.get(i).cardLocationY) && !cardAlreadySelected)
-                {
-                    currentHand.get(i).cardSelected = true;
-                    cardAlreadySelected = true;
-                    return true;
-                }else if ((mouseX > currentHand.get(i).cardLocationX &&
-                        mouseX < cardWidth + currentHand.get(i).cardLocationX)
-                        && (mouseY > currentHand.get(i).cardLocationY
-                        && mouseY < cardHeight + currentHand.get(i).cardLocationY))
-                {
-                    if (currentHand.get(i).cardSelected)
-                    {
-                        currentHand.get(i).cardSelected = false;
-                        cardAlreadySelected = false;
-                    }
-                }
-
-
-            }
-
-            if(Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT))
-            {
-                int mouseX = Gdx.input.getX();
-                int mouseY = (Gdx.graphics.getHeight() - Gdx.input.getY()); //lol y is inverted so this is to un-invert it.
-                if ((mouseX > currentHand.get(i).cardLocationX &&
-                        mouseX < cardWidth + currentHand.get(i).cardLocationX)
-                        && (mouseY > currentHand.get(i).cardLocationY
-                        && mouseY < cardHeight + currentHand.get(i).cardLocationY))
-                {
-                    if (currentHand.get(i).cardSelected)
-                    {
-                        currentHand.get(i).cardSelected = false;
-                        cardAlreadySelected = false;
-                    }
-                }
-
-
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
-        return false;
-    }
-
-    @Override
-    public boolean mouseMoved(int screenX, int screenY) {
-        return false;
-    }
-
-    @Override
-    public boolean scrolled(float amountX, float amountY) {
-        return false;
     }
 
     public boolean isCardAlreadySelected() {

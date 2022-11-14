@@ -19,7 +19,7 @@ import java.util.Random;
 
 public class Board
 {
-    public class Zone implements InputProcessor
+    public class Zone
     {
         int zoneLocation;
         Card activeCard;
@@ -44,7 +44,6 @@ public class Board
          */
         public Zone(int location)
         {
-            inputMultiplexer.addProcessor(this);
             if (location == 0)
             {
                 zoneX = zoneX + (150 * player1ZonesCount);
@@ -72,7 +71,6 @@ public class Board
          */
         public Zone(float x, float y)
         {
-            inputMultiplexer.addProcessor(this);
             zoneX = x;
             zoneY = y;
         }
@@ -124,139 +122,6 @@ public class Board
                 }
             }
         }
-
-        /*
-        Below is code for user input. Only touchDown is in use at the moment.
-        */
-        @Override
-        public boolean keyDown(int keycode)
-        {
-            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
-            {
-                playerTurn = !playerTurn;
-            }
-            return false;
-        }
-
-        @Override
-        public boolean keyUp(int keycode) {
-            return false;
-        }
-
-        @Override
-        public boolean keyTyped(char character) {
-            return false;
-        }
-
-        /**
-         * Checks and updates mouseX and mouseY with the current mouse location when called.
-         * In its current state, when the left mouse button is clicked, it will place down a card in the
-         * zone. If the right mouse button is pressed, the card is removed from the zone.
-         * This uses the touchDown method from InputProcessor. If this grows, this will
-         * have to be split into a different class eventually.
-         *
-         * TODO: Cry... Oh and only allow for one card to be selected.
-         * TODO: Fix bug where player can attack own cards.
-         * TODO: Prevent player from placing down cards that are already in the zone.
-         */
-        @Override
-        public boolean touchDown(int screenX, int screenY, int pointer, int button)
-        {
-            if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) // && player == 0
-            {
-
-                mouseX = Gdx.input.getX();
-                mouseY = (Gdx.graphics.getHeight() - Gdx.input.getY()); //lol y is inverted so this is to un-invert it.
-                if ((!cardPlaced) && (player == 0) && (playerTurn))
-                {
-                    for (int i = 0; i < player1.hand.currentHand.size(); i++)
-                    {
-                        if (player1.hand.currentHand.get(i).cardSelected &&
-                                (mouseX > zoneX && mouseX < cardWidth + zoneX) &&
-                                (mouseY > zoneY && mouseY < cardHeight + zoneY))
-                        {
-                            activeCard = player1.placeCardFromHand(i);
-                            cardPlaced = true;
-                            player1.hand.setCardAlreadySelected(false);
-                            return true;
-                        }
-                    }
-                }
-
-                if (cardPlaced && playerTurn && !cardAttacked && !cardSelected && player == 0)
-                {
-                    for (int i = 0; i < zone.length; i++)
-                    {
-                        if ((mouseX > zoneX && mouseX < cardWidth + zoneX) &&
-                                (mouseY > zoneY && mouseY < cardHeight + zoneY))
-                        {
-                            cardSelected = true;
-                            return true;
-                        }
-                    }
-                }else if (cardSelected && playerTurn && !cardAttacked && player == 0)
-                {
-                    for (int i = 0; i < zone.length + 1; i++)
-                    {
-                        if ((mouseX > zoneX && mouseX < cardWidth + zoneX) &&
-                                (mouseY > zoneY && mouseY < cardHeight + zoneY))
-                        {
-                            cardSelected = false;
-                            return true;
-                        }
-                    }
-                }
-
-                if (!cardSelected && playerTurn && !cardAttacked && player == 1)
-                {
-                    for (int i = 0; i < zone.length - 1; i++)
-                    {
-                        if ((mouseX > zoneX && mouseX < cardWidth + zoneX) &&
-                                (mouseY > zoneY && mouseY < cardHeight + zoneY) && zone[i].cardSelected)
-                        {
-                            cardSelected = true;
-                            return true;
-                        }
-                    }
-                }
-            }
-
-            if(Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT) && cardPlaced && player == 0)
-            {
-                mouseX = Gdx.input.getX();
-                mouseY = (Gdx.graphics.getHeight() - Gdx.input.getY()); //lol y is inverted so this is to un-invert it.
-                if ((mouseX > zoneX && mouseX < cardWidth + zoneX) && (mouseY > zoneY && mouseY < cardHeight + zoneY)
-                        && cardSelected == true)
-                {
-                    cardSelected = false;
-                    return true;
-                }
-
-                return false;
-            }
-            return false;
-        }
-
-        @Override
-        public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-            return false;
-        }
-
-        @Override
-        public boolean touchDragged(int screenX, int screenY, int pointer) {
-            return false;
-        }
-
-        @Override
-        public boolean mouseMoved(int screenX, int screenY) {
-            return false;
-        }
-
-        @Override
-        public boolean scrolled(float amountX, float amountY) {
-            return false;
-        }
-
     }
 
     public class DeckZone extends Zone
@@ -267,7 +132,6 @@ public class Board
 
         public DeckZone(Player p)
         {
-            inputMultiplexer.addProcessor(this);
             zoneLocation = -1;
             activeDeck = p.getDeck();
             player = 1;
@@ -287,25 +151,6 @@ public class Board
                 fontBatch.end();
             }
         }
-
-        @Override
-        public boolean touchDown(int screenX, int screenY, int pointer, int button)
-        {
-            if (button == Input.Buttons.LEFT)
-            {
-                mouseX = Gdx.input.getX();
-                mouseY = (Gdx.graphics.getHeight() - Gdx.input.getY()); //lol y is inverted so this is to un-invert it.
-                if ((mouseX > zoneX && mouseX < cardWidth + zoneX) && (mouseY > zoneY && mouseY < cardHeight + zoneY)
-                & !playerDrew)
-                {
-                    player1.draw();
-                    playerDrew = true;
-                    return true;
-                }
-                return false;
-            }
-            return false;
-        }
     }
 
     Player player1;
@@ -317,21 +162,15 @@ public class Board
     SpriteBatch fontBatch;
     BitmapFont font;
     ShapeRenderer shapeRenderer;
-    float mouseX = Gdx.input.getX();
-    float mouseY = (Gdx.graphics.getHeight() - Gdx.input.getY());
-    int player1Zones = 4;
     int player1ZonesCount = 0;
-
-    int player2Zones = 4;
     int player2ZonesCount = 0;
     Zone[] zone;
     DeckZone deckZone;
+    Controls controls;
     InputMultiplexer inputMultiplexer = new InputMultiplexer();
     boolean firstTurnDraw = false;
     boolean playerDrew = false;
     boolean playerTurn = true;
-    Random rand = new Random();
-
 
     /**
      * Default constructor.
@@ -358,7 +197,9 @@ public class Board
             zone[i] = new Zone(1);
         }
         deckZone = new DeckZone(player1);
-        inputMultiplexer.addProcessor(player1.hand);
+        controls = new Controls(player1.hand);
+        controls.setBoard(this);
+        inputMultiplexer.addProcessor(controls);
         Gdx.input.setInputProcessor(inputMultiplexer);
     }
 
@@ -380,7 +221,8 @@ public class Board
             zone[i] = new Zone(1);
         }
         deckZone = new DeckZone(p1);
-        inputMultiplexer.addProcessor(player1.hand);
+        controls = new Controls(player1.hand);
+        inputMultiplexer.addProcessor(controls);
         Gdx.input.setInputProcessor(inputMultiplexer);
     }
 
@@ -394,33 +236,11 @@ public class Board
     }
 
     /**
-     * boardPlace is rendering the zones and deck on screen. Now that I think about it, why is this
-     * method called boardPlace?
-     *
-     * TODO: Fix attacking issue, where player cannot attack AI
+     * zoneRenderAndAttackCheck currently renders the zones on screen, and checks to see if an attack was made.
+     * Note, zoneRender and AttackCheck will be split in the future.
      */
-    public void boardPlace()
+    public void zoneRenderAndAttackCheck()
     {
-        //There is a bad bug, where if a card attacks the card lower than it in the array list
-        //This is most likely happening because of the j for loop.
-        //Bug won't show up unless there is a card that attacks the card next to it.
-        while (!firstTurnDraw)
-        {
-            for (int i = 0; i < 5; i++)
-            {
-                player1.hand.add(player1.getDeck().draw());
-            }
-            firstTurnDraw = true;
-        }
-
-        player1.hand.handCardRender(this);
-        player2.AIUpdate(this);
-        if (!playerTurn)
-        {
-            player2.aiPlay();
-            playerTurn();
-        }
-
         for (int i = 0; i < zone.length; i++)
         {
             zone[i].zoneRender();
@@ -450,6 +270,35 @@ public class Board
                 }
             }
         }
+    }
+
+    /**
+     * boardPlace is rendering the zones and deck on screen. Now that I think about it, why is this
+     * method called boardPlace?
+     * TODO: Fix attacking issue, where player cannot attack AI
+     */
+    public void boardPlace()
+    {
+        //There is a bad bug, where if a card attacks the card lower than it in the array list
+        //This is most likely happening because of the j for loop.
+        //Bug won't show up unless there is a card that attacks the card next to it.
+        while (!firstTurnDraw)
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                player1.hand.add(player1.getDeck().draw());
+            }
+            firstTurnDraw = true;
+        }
+
+        player1.hand.handCardRender(this);
+        player2.AIUpdate(this);
+        if (!playerTurn)
+        {
+            player2.aiPlay();
+            playerTurn();
+        }
+        zoneRenderAndAttackCheck();
         deckZone.zoneRender();
     }
 

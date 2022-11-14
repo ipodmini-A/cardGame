@@ -6,7 +6,7 @@ package cchase.cardgame;
  */
 public class Deck extends ArrayStack<Card>
 {
-    static private int maximumCards = 10;
+    static private int maximumCards = 20;
 
     public Deck()
     {
