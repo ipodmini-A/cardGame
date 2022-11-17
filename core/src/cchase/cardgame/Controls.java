@@ -53,6 +53,22 @@ public class Controls implements InputProcessor
             mouseX = Gdx.input.getX();
             mouseY = (Gdx.graphics.getHeight() - Gdx.input.getY()); //lol y is inverted so this is to un-invert it.
 
+            //Deck draw
+            if ((mouseX > board.deckZone.zoneX && mouseX < board.cardWidth + board.deckZone.zoneX) && (mouseY > board.deckZone.zoneY && mouseY < board.cardHeight + board.deckZone.zoneY)
+                    & !board.playerDrew)
+            {
+                board.player1.draw();
+                board.playerDrew = true;
+                return true;
+            }
+
+            //Draw check
+            if (!board.playerDrew)
+            {
+                System.out.println("You must draw");
+                return true;
+            }
+
             //Hand selection
             for (int i = 0; i < hand.currentHand.size(); i++)
             {
@@ -124,7 +140,7 @@ public class Controls implements InputProcessor
                             return true;
                         }
                     }
-                }else if (board.zone[j].cardSelected && board.playerTurn && !board.zone[j].cardAttacked && board.zone[j].player == 0)
+                } else if (board.zone[j].cardSelected && board.playerTurn && !board.zone[j].cardAttacked && board.zone[j].player == 0)
                 {
                     for (int i = 0; i < board.zone.length + 1; i++)
                     {
@@ -151,14 +167,6 @@ public class Controls implements InputProcessor
                 }
             }
 
-            //Deck draw
-            if ((mouseX > board.deckZone.zoneX && mouseX < board.cardWidth + board.deckZone.zoneX) && (mouseY > board.deckZone.zoneY && mouseY < board.cardHeight + board.deckZone.zoneY)
-                    & !board.playerDrew)
-            {
-                board.player1.draw();
-                board.playerDrew = true;
-                return true;
-            }
             return false;
         }
 

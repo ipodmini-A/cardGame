@@ -10,6 +10,8 @@ import java.util.Random;
 public class Card
 {
     private String name;
+    private String region;
+    private String descriptionOrEffect;
     private int attack = -1;
     private int health = -1;
     Random rand = new Random();

@@ -155,7 +155,7 @@ public class Board
 
     Player player1;
     AIPlayer player2;
-    float cardScale = 40f;
+    float cardScale = 50f;
     float cardWidth = 2.5f * cardScale;
     float cardHeight = 3.5f * cardScale;
     SpriteBatch batch;
@@ -164,6 +164,8 @@ public class Board
     ShapeRenderer shapeRenderer;
     int player1ZonesCount = 0;
     int player2ZonesCount = 0;
+    private int turn = 0;
+
     Zone[] zone;
     DeckZone deckZone;
     Controls controls;
@@ -171,6 +173,7 @@ public class Board
     boolean firstTurnDraw = false;
     boolean playerDrew = false;
     boolean playerTurn = true;
+    boolean playerAttackForGame = false;
 
     /**
      * Default constructor.
@@ -228,11 +231,38 @@ public class Board
 
     public void playerTurn()
     {
+
         for (int i = 0; i < 4; i++)
         {
             zone[i].cardAttacked = false;
         }
         playerDrew = false;
+    }
+
+    public void attack(Card attackingCard, Card defendingCard)
+    {
+        try
+        {
+            defendingCard.setHealth(defendingCard.getHealth() - attackingCard.getAttack());
+        }catch (Exception e)
+        {
+            for (int i = 0; i < zone.length; i++)
+            {
+                boolean ActiveCards = false;
+                if (zone[i].player == 1)
+                {
+                    ActiveCards = zone[i].cardPlaced;
+                }
+
+                if (!ActiveCards && turn != 0)
+                {
+                    playerAttackForGame = true;
+                }else
+                {
+                    System.out.println("Card not found");
+                }
+            }
+        }
     }
 
     /**
@@ -250,7 +280,7 @@ public class Board
                 {
                     if (zone[j].cardSelected)
                     {
-                        zone[j].activeCard.setHealth(zone[j].activeCard.getHealth() - zone[i].activeCard.getAttack());
+                        attack(zone[i].activeCard, zone[j].activeCard);
                         zone[i].cardSelected = false;
                         zone[i].cardAttacked = true;
                         zone[j].cardSelected = false;
@@ -261,7 +291,7 @@ public class Board
                 {
                     if (zone[k].cardSelected)
                     {
-                        zone[k].activeCard.setHealth(zone[k].activeCard.getHealth() - zone[i].activeCard.getAttack());
+                        attack(zone[i].activeCard, zone[k].activeCard);
                         zone[i].cardSelected = false;
                         zone[i].cardAttacked = true;
                         zone[k].cardSelected = false;
@@ -284,7 +314,7 @@ public class Board
         //Bug won't show up unless there is a card that attacks the card next to it.
         while (!firstTurnDraw)
         {
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 4; i++)
             {
                 player1.hand.add(player1.getDeck().draw());
             }
@@ -295,11 +325,18 @@ public class Board
         player2.AIUpdate(this);
         if (!playerTurn)
         {
+            turn++;
             player2.aiPlay();
+            turn++;
             playerTurn();
         }
         zoneRenderAndAttackCheck();
         deckZone.zoneRender();
+
+        if (playerAttackForGame && turn != 0)
+        {
+            System.out.println("Player has won");
+        }
     }
 
     /**
@@ -312,5 +349,25 @@ public class Board
         font.dispose();
         shapeRenderer.dispose();
         fontBatch.dispose();
+    }
+
+    public boolean isPlayerAttackForGame()
+    {
+        return playerAttackForGame;
+    }
+
+    public void setPlayerAttackForGame(boolean playerAttackForGame)
+    {
+        this.playerAttackForGame = playerAttackForGame;
+    }
+
+    public int getTurn()
+    {
+        return turn;
+    }
+
+    public void setTurn(int turn)
+    {
+        this.turn = turn;
     }
 }

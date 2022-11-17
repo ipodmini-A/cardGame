@@ -13,7 +13,7 @@ public class Player
     public Player()
     {
         name = "BLANK";
-        health = 10;
+        health = 1;
         deck = new Deck();
         hand = new Hand();
         discardPile = new DiscardPile();
