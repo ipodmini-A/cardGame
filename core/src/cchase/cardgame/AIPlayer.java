@@ -28,8 +28,22 @@ public class AIPlayer extends Player
             int zoneWithLowestHealth = 0;
             int tempIndex = rand.nextInt(4) + 4;
             draw();
-            boardInPlay.zone[tempIndex].activeCard = placeCardFromHand();
-            boardInPlay.zone[tempIndex].cardPlaced = true; // rand.nextInt(3, 8)
+            if (boardInPlay.zone[tempIndex].cardPlaced)
+            {
+                for (int i = 4; i < boardInPlay.zone.length; i++)
+                {
+                    if (!boardInPlay.zone[i].cardPlaced)
+                    {
+                        boardInPlay.zone[i].activeCard = placeCardFromHand();
+                        boardInPlay.zone[i].cardPlaced = true; // rand.nextInt(3, 8)
+                        break;
+                    }
+                }
+            }else
+            {
+                boardInPlay.zone[tempIndex].activeCard = placeCardFromHand();
+                boardInPlay.zone[tempIndex].cardPlaced = true; // rand.nextInt(3, 8)
+            }
 
 
             try {

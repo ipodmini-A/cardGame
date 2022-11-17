@@ -18,7 +18,6 @@ public class GameScreen extends ScreenAdapter
     public void show()
     {
         board = new Board();
-        game.dispose();
     }
     @Override
     public void render(float delta)
@@ -26,6 +25,10 @@ public class GameScreen extends ScreenAdapter
         Gdx.gl.glClearColor(0, 0, 0, 0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         board.boardPlace();
+        if (board.playerAttackForGame)
+        {
+            game.setScreen(new EndScreen(game));
+        }
     }
 @Override
     public void hide()

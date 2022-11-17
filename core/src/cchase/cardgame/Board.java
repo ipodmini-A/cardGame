@@ -15,8 +15,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
-import java.util.Random;
-
 public class Board
 {
     public class Zone
@@ -174,6 +172,7 @@ public class Board
     boolean playerDrew = false;
     boolean playerTurn = true;
     boolean playerAttackForGame = false;
+    boolean aiAttackForGame = false;
 
     /**
      * Default constructor.
@@ -314,7 +313,7 @@ public class Board
         //Bug won't show up unless there is a card that attacks the card next to it.
         while (!firstTurnDraw)
         {
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 1; i++)
             {
                 player1.hand.add(player1.getDeck().draw());
             }
