@@ -24,8 +24,8 @@ public class Board
         boolean cardSelected = false;
         boolean cardPlaced = false;
         boolean cardAttacked = false;
-        float zoneX = Gdx.graphics.getWidth() / 3.5f;
-        float zoneY = Gdx.graphics.getHeight() / 4;
+        float zoneX = (Gdx.graphics.getHeight() / 2f) - (Gdx.graphics.getHeight() / 10f);
+        float zoneY = (Gdx.graphics.getHeight() / 2f) - (Gdx.graphics.getHeight() / 2.9f);
         int player;
 
         /**
@@ -44,7 +44,7 @@ public class Board
         {
             if (location == 0)
             {
-                zoneX = zoneX + (150 * player1ZonesCount);
+                zoneX = zoneX + (200 * player1ZonesCount);
                 zoneLocation = player1ZonesCount;
                 player1ZonesCount++;
                 player = 0;
@@ -52,8 +52,8 @@ public class Board
 
             if (location == 1)
             {
-                zoneY = 400f;
-                zoneX = zoneX + (150 * player2ZonesCount);
+                zoneY = Gdx.graphics.getHeight() / 1.7f;
+                zoneX = zoneX + (200 * player2ZonesCount);
                 zoneLocation = player2ZonesCount;
                 player2ZonesCount++;
                 player = 1;
@@ -87,15 +87,7 @@ public class Board
             }
             if (cardPlaced)
             {
-                shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-                shapeRenderer.setColor(1,0,0,0);
-                shapeRenderer.rect(zoneX, zoneY, cardWidth, cardHeight);
-                shapeRenderer.end();
-                fontBatch.begin();
-                font.draw(fontBatch, activeCard.getName(), zoneX + 25,zoneY + 25);
-                font.draw(fontBatch, "Health: " + activeCard.getHealth(), zoneX + 15,zoneY + 125);
-                font.draw(fontBatch, "Attack: " + activeCard.getAttack(), zoneX + 15,zoneY + 105);
-                fontBatch.end();
+                activeCard.cardRender(zoneX,zoneY,cardWidth,cardHeight);
                 if (activeCard.getHealth() <= 0 && cardPlaced)
                 {
                     cardPlaced = false;
@@ -153,7 +145,7 @@ public class Board
 
     Player player1;
     AIPlayer player2;
-    float cardScale = 50f;
+    float cardScale = 60f;
     float cardWidth = 2.5f * cardScale;
     float cardHeight = 3.5f * cardScale;
     SpriteBatch batch;
@@ -172,7 +164,7 @@ public class Board
     boolean playerDrew = false;
     boolean playerTurn = true;
     boolean playerAttackForGame = false;
-    boolean aiAttackForGame = false;
+    private boolean aiAttackForGame = false;
 
     /**
      * Default constructor.
@@ -283,7 +275,6 @@ public class Board
                         zone[i].cardSelected = false;
                         zone[i].cardAttacked = true;
                         zone[j].cardSelected = false;
-                        break;
                     }
                 }
                 for (int k = i + 1; k < zone.length; k++)
@@ -294,7 +285,6 @@ public class Board
                         zone[i].cardSelected = false;
                         zone[i].cardAttacked = true;
                         zone[k].cardSelected = false;
-                        break;
                     }
                 }
             }
@@ -336,6 +326,11 @@ public class Board
         {
             System.out.println("Player has won");
         }
+
+        if (aiAttackForGame)
+        {
+            System.out.println("You have lost!");
+        }
     }
 
     /**
@@ -368,5 +363,13 @@ public class Board
     public void setTurn(int turn)
     {
         this.turn = turn;
+    }
+
+    public boolean isAiAttackForGame() {
+        return aiAttackForGame;
+    }
+
+    public void setAiAttackForGame(boolean aiAttackForGame) {
+        this.aiAttackForGame = aiAttackForGame;
     }
 }

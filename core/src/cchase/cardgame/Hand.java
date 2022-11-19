@@ -1,6 +1,8 @@
 package cchase.cardgame;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
@@ -25,9 +27,13 @@ public class Hand
     {
         float cardLocationX;
         float cardLocationY;
+        Sprite cardTemplateSprite;
         SpriteBatch cardBatch;
+        SpriteBatch fontBatch;
         ShapeRenderer shapeRenderer;
         BitmapFont font;
+        Texture texture;
+
         boolean cardSelected = false;
 
         /**
@@ -38,6 +44,9 @@ public class Hand
         {
             super(c);
             cardBatch = new SpriteBatch();
+            fontBatch = new SpriteBatch();
+            texture = new Texture("CardTemplate.png");
+            cardTemplateSprite = new Sprite(texture);
             shapeRenderer = new ShapeRenderer();
             font = new BitmapFont();
         }
@@ -57,10 +66,11 @@ public class Hand
             }
             if (cardSelected == false)
             {
-                shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-                shapeRenderer.setColor(0,1,0,0);
-                shapeRenderer.rect(cardLocationX, cardLocationY, cardWidth, cardHeight);
-                shapeRenderer.end();
+                cardTemplateSprite.setSize(cardWidth,cardHeight);
+                cardTemplateSprite.setPosition(cardLocationX,cardLocationY);
+                cardBatch.begin();
+                cardTemplateSprite.draw(cardBatch);
+                cardBatch.end();
             }
             cardBatch.begin();
             font.draw(cardBatch, getName(), cardLocationX,cardLocationY + 35);

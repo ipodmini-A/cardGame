@@ -27,7 +27,11 @@ public class GameScreen extends ScreenAdapter
         board.boardPlace();
         if (board.playerAttackForGame)
         {
-            game.setScreen(new EndScreen(game));
+            game.setScreen(new EndScreen(game, true));
+        }
+        if (board.isAiAttackForGame())
+        {
+            game.setScreen(new EndScreen(game, false));
         }
     }
 @Override

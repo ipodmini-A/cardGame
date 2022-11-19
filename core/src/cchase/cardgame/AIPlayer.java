@@ -45,25 +45,37 @@ public class AIPlayer extends Player
                 boardInPlay.zone[tempIndex].cardPlaced = true; // rand.nextInt(3, 8)
             }
 
-
-            try {
-                for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < 4; i++)
+            {
+                try
+                {
                     if (boardInPlay.zone[i].activeCard.getHealth() > lowestHealth) {
                         lowestHealth = boardInPlay.zone[i].activeCard.getHealth();
                         zoneWithLowestHealth = i;
                     }
+                }catch(Exception e)
+                {
+                    System.out.println("No cards in zone " + i);
                 }
+            }
 
-                for (int i = 4; i < boardInPlay.zone.length; i++) {
-                    if (boardInPlay.zone[i].activeCard.getAttack() > maxAttack) {
+            for (int i = 4; i < boardInPlay.zone.length; i++)
+            {
+                try
+                {
+                    if (boardInPlay.zone[i].activeCard.getAttack() > maxAttack)
+                    {
                         maxAttack = boardInPlay.zone[i].activeCard.getAttack();
                         zoneWithHighestAttack = i;
                     }
+                }catch(Exception e)
+                {
+                    System.out.println("No cards in zone " + i);
+
                 }
-            }catch (Exception e)
-            {
-                System.out.println("No card found in a certain zone while looking");
             }
+
+            winCheck();
 
             try
             {
@@ -71,11 +83,38 @@ public class AIPlayer extends Player
                         - boardInPlay.zone[zoneWithHighestAttack].activeCard.getAttack());
             }catch (Exception e)
             {
-                System.out.println("No card found to attack...");
+                boardInPlay.setAiAttackForGame(true);
+                System.out.println("Attack for game!");
             }
+
+
 
             boardInPlay.playerTurn = true;
             aiTurn = false;
+        }
+    }
+
+    public void winCheck()
+    {
+        boolean cardFound = false;
+        for (int i = 0; i < 4; i++)
+        {
+            try
+            {
+                if (boardInPlay.zone[i].cardPlaced)
+                {
+                    cardFound = true;
+                }
+            }catch(Exception e)
+            {
+                System.out.println("Player has a card in zone " + i);
+            }
+        }
+
+        if (!cardFound)
+        {
+            boardInPlay.setAiAttackForGame(true);
+            System.out.println("Attack for game!");
         }
     }
 

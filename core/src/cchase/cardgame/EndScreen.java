@@ -12,7 +12,7 @@ public class EndScreen extends ScreenAdapter
     CardGame game;
     boolean playerWon;
 
-    public EndScreen(CardGame game)
+    public EndScreen(CardGame game, boolean playerWon)
     {
         this.game = game;
     }
@@ -22,7 +22,6 @@ public class EndScreen extends ScreenAdapter
     {
         Gdx.input.setInputProcessor(new InputAdapter()
         {
-
             @Override
             public boolean keyDown(int keyCode)
             {
@@ -40,9 +39,15 @@ public class EndScreen extends ScreenAdapter
     public void render(float delta) {
         Gdx.gl.glClearColor(.25f, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
         game.batch.begin();
-        game.font.draw(game.batch, "You win!", Gdx.graphics.getWidth() * .25f, Gdx.graphics.getHeight() * .75f);
+        if (playerWon)
+        {
+            game.font.draw(game.batch, "You win!", Gdx.graphics.getWidth() * .25f, Gdx.graphics.getHeight() * .75f);
+        }
+        if (!playerWon)
+        {
+            game.font.draw(game.batch, "You lost!", Gdx.graphics.getWidth() * .25f, Gdx.graphics.getHeight() * .75f);
+        }
         game.font.draw(game.batch, "Press enter to restart.", Gdx.graphics.getWidth() * .25f, Gdx.graphics.getHeight() * .25f);
         playerWon = true;
         game.batch.end();
