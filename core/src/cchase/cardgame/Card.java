@@ -1,10 +1,10 @@
 package cchase.cardgame;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
 import java.util.Random;
 
 /**
@@ -23,10 +23,12 @@ public class Card
     private int attack = -1;
     private int health = -1;
     Sprite cardTemplateSprite;
+    Sprite cardArtSprite;
     SpriteBatch batch;
     SpriteBatch fontBatch;
     BitmapFont font;
-    Texture texture;
+    Texture cardTemplateTexture;
+    Texture cardArt;
     Random rand = new Random();
     private float x;
     private float y;
@@ -42,8 +44,10 @@ public class Card
         //Default constructor. A name of "Card" is set, and the attack and health are random numbers between 0-4
         batch = new SpriteBatch();
         fontBatch = new SpriteBatch();
-        texture = new Texture("CardTemplate.png");
-        cardTemplateSprite = new Sprite(texture);
+        cardTemplateTexture = new Texture("CardTemplate.png");
+        cardArt = new Texture("states/Delaware.png");
+        cardTemplateSprite = new Sprite(cardTemplateTexture);
+        cardArtSprite = new Sprite(cardArt);
         font = new BitmapFont();
         name = "Card" + rand.nextInt(10);
         if (rand.nextInt(10) == 8)
@@ -64,8 +68,10 @@ public class Card
     {
         batch = new SpriteBatch();
         fontBatch = new SpriteBatch();
-        texture = new Texture("CardTemplate.png");
-        cardTemplateSprite = new Sprite(texture);
+        cardTemplateTexture = new Texture("CardTemplate.png");
+        cardArt = new Texture("states/Delaware.png");
+        cardTemplateSprite = new Sprite(cardTemplateTexture);
+        cardArtSprite = new Sprite(cardArt);
         font = new BitmapFont();
 
         //Constructor with arguments. name, attack, and health are set to the values passed through.
@@ -83,8 +89,10 @@ public class Card
     {
         batch = new SpriteBatch();
         fontBatch = new SpriteBatch();
-        texture = new Texture("CardTemplate.png");
-        cardTemplateSprite = new Sprite(texture);
+        cardTemplateTexture = new Texture("CardTemplate.png");
+        cardArt = new Texture("states/Delaware.png");
+        cardTemplateSprite = new Sprite(cardTemplateTexture);
+        cardArtSprite = new Sprite(cardArt);
         font = new BitmapFont();
         name = card.getName();
         attack = card.getAttack();
@@ -97,8 +105,12 @@ public class Card
         this.y = y;
         cardTemplateSprite.setSize(width,height);
         cardTemplateSprite.setPosition(x,y);
+        cardArtSprite.setSize(90, 90);
+        cardArtSprite.setPosition(x + 30, y + 80);
+        cardArtSprite.setColor(Color.WHITE);
         batch.begin();
         cardTemplateSprite.draw(batch);
+        cardArtSprite.draw(batch);
         batch.end();
         fontBatch.begin();
         font.draw(fontBatch, getName(), x + 15,y + 195);
