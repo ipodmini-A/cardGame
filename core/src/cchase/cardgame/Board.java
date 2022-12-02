@@ -19,14 +19,14 @@ public class Board
 {
     public class Zone
     {
-        int zoneLocation;
-        Card activeCard;
-        boolean cardSelected = false;
-        boolean cardPlaced = false;
-        boolean cardAttacked = false;
-        float zoneX = (Gdx.graphics.getHeight() / 2f) - (Gdx.graphics.getHeight() / 10f);
-        float zoneY = (Gdx.graphics.getHeight() / 2f) - (Gdx.graphics.getHeight() / 2.9f);
-        int player;
+        private int zoneLocation;
+        private Card activeCard;
+        private boolean cardSelected = false;
+        private boolean cardPlaced = false;
+        private boolean cardAttacked = false;
+        private float zoneX = (Gdx.graphics.getHeight() / 2f) - (Gdx.graphics.getHeight() / 10f);
+        private float zoneY = (Gdx.graphics.getHeight() / 2f) - (Gdx.graphics.getHeight() / 2.9f);
+        private int player;
 
         /**
          * Constructor. Currently, just sets the player to -1.
@@ -112,6 +112,86 @@ public class Board
                 }
             }
         }
+
+        public Card getActiveCard()
+        {
+            return activeCard;
+        }
+
+        public void setActiveCard(Card activeCard)
+        {
+            this.activeCard = activeCard;
+        }
+
+        public int getZoneLocation()
+        {
+            return zoneLocation;
+        }
+
+        public void setZoneLocation(int zoneLocation)
+        {
+            this.zoneLocation = zoneLocation;
+        }
+
+        public boolean isCardSelected()
+        {
+            return cardSelected;
+        }
+
+        public void setCardSelected(boolean cardSelected)
+        {
+            this.cardSelected = cardSelected;
+        }
+
+        public boolean isCardPlaced()
+        {
+            return cardPlaced;
+        }
+
+        public void setCardPlaced(boolean cardPlaced)
+        {
+            this.cardPlaced = cardPlaced;
+        }
+
+        public boolean isCardAttacked()
+        {
+            return cardAttacked;
+        }
+
+        public void setCardAttacked(boolean cardAttacked)
+        {
+            this.cardAttacked = cardAttacked;
+        }
+
+        public float getZoneX()
+        {
+            return zoneX;
+        }
+
+        public void setZoneX(float zoneX)
+        {
+            this.zoneX = zoneX;
+        }
+
+        public float getZoneY()
+        {
+            return zoneY;
+        }
+
+        public void setZoneY(float zoneY)
+        {
+            this.zoneY = zoneY;
+        }
+
+        public int getPlayer()
+        {
+            return player;
+        }
+
+        public void setPlayer(int player)
+        {
+            this.player = player;
+        }
     }
 
     public class DeckZone extends Zone
@@ -122,9 +202,9 @@ public class Board
 
         public DeckZone(Player p)
         {
-            zoneLocation = -1;
+            setZoneLocation(-1);
             activeDeck = p.getDeck();
-            player = 1;
+            setPlayer(1);
         }
 
         public void zoneRender()

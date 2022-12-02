@@ -4,8 +4,8 @@ import java.util.Random;
 
 public class AIPlayer extends Player
 {
-    Random rand = new Random();
-    Board boardInPlay;
+    private final Random rand = new Random();
+    private Board boardInPlay;
     boolean aiTurn = false;
     public AIPlayer()
     {
@@ -28,29 +28,29 @@ public class AIPlayer extends Player
             int zoneWithLowestHealth = 0;
             int tempIndex = rand.nextInt(4) + 4;
             draw();
-            if (boardInPlay.zone[tempIndex].cardPlaced)
+            if (boardInPlay.zone[tempIndex].isCardPlaced())
             {
                 for (int i = 4; i < boardInPlay.zone.length; i++)
                 {
-                    if (!boardInPlay.zone[i].cardPlaced)
+                    if (!boardInPlay.zone[i].isCardPlaced())
                     {
-                        boardInPlay.zone[i].activeCard = placeCardFromHand();
-                        boardInPlay.zone[i].cardPlaced = true; // rand.nextInt(3, 8)
+                        boardInPlay.zone[i].setActiveCard(placeCardFromHand());
+                        boardInPlay.zone[i].setCardPlaced(true); // rand.nextInt(3, 8)
                         break;
                     }
                 }
             }else
             {
-                boardInPlay.zone[tempIndex].activeCard = placeCardFromHand();
-                boardInPlay.zone[tempIndex].cardPlaced = true; // rand.nextInt(3, 8)
+                boardInPlay.zone[tempIndex].setActiveCard(placeCardFromHand());
+                boardInPlay.zone[tempIndex].setCardPlaced(true); // rand.nextInt(3, 8)
             }
 
             for (int i = 0; i < 4; i++)
             {
                 try
                 {
-                    if (boardInPlay.zone[i].activeCard.getHealth() > lowestHealth) {
-                        lowestHealth = boardInPlay.zone[i].activeCard.getHealth();
+                    if (boardInPlay.zone[i].getActiveCard().getHealth() > lowestHealth) {
+                        lowestHealth = boardInPlay.zone[i].getActiveCard().getHealth();
                         zoneWithLowestHealth = i;
                     }
                 }catch(Exception e)
@@ -63,9 +63,9 @@ public class AIPlayer extends Player
             {
                 try
                 {
-                    if (boardInPlay.zone[i].activeCard.getAttack() > maxAttack)
+                    if (boardInPlay.zone[i].getActiveCard().getAttack() > maxAttack)
                     {
-                        maxAttack = boardInPlay.zone[i].activeCard.getAttack();
+                        maxAttack = boardInPlay.zone[i].getActiveCard().getAttack();
                         zoneWithHighestAttack = i;
                     }
                 }catch(Exception e)
@@ -79,8 +79,8 @@ public class AIPlayer extends Player
 
             try
             {
-                boardInPlay.zone[zoneWithLowestHealth].activeCard.setHealth(boardInPlay.zone[zoneWithLowestHealth].activeCard.getHealth()
-                        - boardInPlay.zone[zoneWithHighestAttack].activeCard.getAttack());
+                boardInPlay.zone[zoneWithLowestHealth].getActiveCard().setHealth(boardInPlay.zone[zoneWithLowestHealth].getActiveCard().getHealth()
+                        - boardInPlay.zone[zoneWithHighestAttack].getActiveCard().getAttack());
             }catch (Exception e)
             {
                 boardInPlay.setAiAttackForGame(true);
@@ -101,7 +101,7 @@ public class AIPlayer extends Player
         {
             try
             {
-                if (boardInPlay.zone[i].cardPlaced)
+                if (boardInPlay.zone[i].isCardPlaced())
                 {
                     cardFound = true;
                 }

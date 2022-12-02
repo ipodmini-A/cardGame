@@ -113,54 +113,54 @@ public class Controls implements InputProcessor
             //Board selection
             for (int j = 0; j < board.zone.length; j++)
             {
-                if ((!board.zone[j].cardPlaced) && (board.zone[j].player == 0) && (board.playerTurn))
+                if ((!board.zone[j].isCardPlaced()) && (board.zone[j].getPlayer() == 0) && (board.playerTurn))
                 {
                     for (int i = 0; i < board.player1.hand.currentHand.size(); i++)
                     {
                         if (board.player1.hand.currentHand.get(i).cardSelected &&
-                                (mouseX > board.zone[j].zoneX && mouseX < board.cardWidth + board.zone[j].zoneX) &&
-                                (mouseY > board.zone[j].zoneY && mouseY < board.cardHeight + board.zone[j].zoneY))
+                                (mouseX > board.zone[j].getZoneX() && mouseX < board.cardWidth + board.zone[j].getZoneX()) &&
+                                (mouseY > board.zone[j].getZoneY() && mouseY < board.cardHeight + board.zone[j].getZoneY()))
                         {
-                            board.zone[j].activeCard = board.player1.placeCardFromHand(i);
-                            board.zone[j].cardPlaced = true;
+                            board.zone[j].setActiveCard(board.player1.placeCardFromHand(i));
+                            board.zone[j].setCardPlaced(true);
                             board.player1.hand.setCardAlreadySelected(false);
                             return true;
                         }
                     }
                 }
 
-                if (board.zone[j].cardPlaced && board.playerTurn && !board.zone[j].cardAttacked && !board.zone[j].cardSelected && board.zone[j].player == 0)
+                if (board.zone[j].isCardPlaced() && board.playerTurn && !board.zone[j].isCardAttacked() && !board.zone[j].isCardSelected() && board.zone[j].getPlayer() == 0)
                 {
                     for (int i = 0; i < board.zone.length; i++)
                     {
-                        if ((mouseX > board.zone[j].zoneX && mouseX < board.cardWidth + board.zone[j].zoneX) &&
-                                (mouseY > board.zone[j].zoneY && mouseY < board.cardHeight + board.zone[j].zoneY))
+                        if ((mouseX > board.zone[j].getZoneX() && mouseX < board.cardWidth + board.zone[j].getZoneX()) &&
+                                (mouseY > board.zone[j].getZoneY() && mouseY < board.cardHeight + board.zone[j].getZoneY()))
                         {
-                            board.zone[j].cardSelected = true;
+                            board.zone[j].setCardSelected(true);
                             return true;
                         }
                     }
-                } else if (board.zone[j].cardSelected && board.playerTurn && !board.zone[j].cardAttacked && board.zone[j].player == 0)
+                } else if (board.zone[j].isCardSelected() && board.playerTurn && !board.zone[j].isCardAttacked() && board.zone[j].getPlayer() == 0)
                 {
                     for (int i = 0; i < board.zone.length + 1; i++)
                     {
-                        if ((mouseX > board.zone[j].zoneX && mouseX < board.cardWidth + board.zone[j].zoneX) &&
-                                (mouseY > board.zone[j].zoneY && mouseY < board.cardHeight + board.zone[j].zoneY))
+                        if ((mouseX > board.zone[j].getZoneX() && mouseX < board.cardWidth + board.zone[j].getZoneX()) &&
+                                (mouseY > board.zone[j].getZoneY() && mouseY < board.cardHeight + board.zone[j].getZoneY()))
                         {
-                            board.zone[j].cardSelected = false;
+                            board.zone[j].setCardSelected(false);
                             return true;
                         }
                     }
                 }
 
-                if (!board.zone[j].cardSelected && board.playerTurn && !board.zone[j].cardAttacked && board.zone[j].player == 1)
+                if (!board.zone[j].isCardSelected() && board.playerTurn && !board.zone[j].isCardAttacked() && board.zone[j].getPlayer() == 1)
                 {
                     for (int i = 0; i < board.zone.length - 1; i++)
                     {
-                        if ((mouseX > board.zone[j].zoneX && mouseX < board.cardWidth + board.zone[j].zoneX) &&
-                                (mouseY > board.zone[j].zoneY && mouseY < board.cardHeight + board.zone[j].zoneY) && board.zone[i].cardSelected)
+                        if ((mouseX > board.zone[j].getZoneX() && mouseX < board.cardWidth + board.zone[j].getZoneX()) &&
+                                (mouseY > board.zone[j].getZoneY() && mouseY < board.cardHeight + board.zone[j].getZoneY()) && board.zone[i].isCardSelected())
                         {
-                            board.zone[j].cardSelected = true;
+                            board.zone[j].setCardSelected(true);
                             return true;
                         }
                     }
@@ -194,11 +194,11 @@ public class Controls implements InputProcessor
             //Board de-selection
             for (int j = 0; j < board.zone.length; j++)
             {
-                if ((mouseX > board.zone[j].zoneX && mouseX < board.cardWidth + board.zone[j].zoneX) &&
-                        (mouseY > board.zone[j].zoneY && mouseY < board.cardHeight + board.zone[j].zoneY)
-                        && board.zone[j].cardSelected)
+                if ((mouseX > board.zone[j].getZoneX() && mouseX < board.cardWidth + board.zone[j].getZoneX()) &&
+                        (mouseY > board.zone[j].getZoneY() && mouseY < board.cardHeight + board.zone[j].getZoneY())
+                        && board.zone[j].isCardSelected())
                 {
-                    board.zone[j].cardSelected = false;
+                    board.zone[j].setCardSelected(false);
                     return true;
                 }
             }

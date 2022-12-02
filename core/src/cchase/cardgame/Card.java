@@ -22,14 +22,14 @@ public class Card
     private String descriptionOrEffect;
     private int attack = -1;
     private int health = -1;
-    Sprite cardTemplateSprite;
-    Sprite cardArtSprite;
-    SpriteBatch batch;
-    SpriteBatch fontBatch;
-    BitmapFont font;
-    Texture cardTemplateTexture;
-    Texture cardArt;
-    Random rand = new Random();
+    private Sprite cardTemplateSprite;
+    private Sprite cardArtSprite;
+    private SpriteBatch batch;
+    private SpriteBatch fontBatch;
+    private BitmapFont font;
+    private Texture cardTemplateTexture;
+    private Texture cardArt;
+    private Random rand = new Random();
     private float x;
     private float y;
 
